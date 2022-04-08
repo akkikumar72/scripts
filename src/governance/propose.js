@@ -75,7 +75,7 @@ We will change the feeTo address of the Pangolin protocol to the FeeCollector co
 
     console.log(`Encoding bytecode ...`);
     const bytecode = tx.encodeABI();
-    const fileOutput = `./${path.basename(__filename, '.js')}-bytecode.txt`;
+    const fileOutput = path.join(__dirname, `${path.basename(__filename, '.js')}-bytecode.txt`);
     fs.writeFileSync(fileOutput, bytecode);
     console.log(`Encoded bytecode to ${fileOutput}`);
     console.log();

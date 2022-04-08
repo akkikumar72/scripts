@@ -44,7 +44,7 @@ const multisigType = CONSTANTS.GNOSIS_SAFE;
 
     console.log(`Encoding bytecode ...`);
     const bytecode = tx.encodeABI();
-    const fileOutput = `./${path.basename(__filename, '.js')}-bytecode.txt`;
+    const fileOutput = path.join(__dirname, `${path.basename(__filename, '.js')}-bytecode.txt`);
     fs.writeFileSync(fileOutput, bytecode);
     console.log(`Encoded bytecode to ${fileOutput}`);
     console.log();
