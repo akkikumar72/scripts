@@ -4,6 +4,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider('https://api.avax.network/
 
 const Helpers = {
     symbolCache: {},
+    decimalsCache: {},
     token0Cache: {},
     token1Cache: {},
 
@@ -11,6 +12,12 @@ const Helpers = {
         if (Helpers.symbolCache[address]) return Helpers.symbolCache[address];
         const contract = new web3.eth.Contract(ABI.TOKEN, address);
         return Helpers.symbolCache[address] = await contract.methods.symbol().call();
+    },
+
+    getDecimalsCached: async (address) => {
+        if (Helpers.decimalsCache[address]) return Helpers.decimalsCache[address];
+        const contract = new web3.eth.Contract(ABI.TOKEN, address);
+        return Helpers.decimalsCache[address] = parseInt(await contract.methods.decimals().call());
     },
 
     getToken0Cached: async (address) => {
@@ -23,6 +30,17 @@ const Helpers = {
         if (Helpers.token1Cache[address]) return Helpers.token1Cache[address];
         const contract = new web3.eth.Contract(ABI.PAIR, address);
         return Helpers.token1Cache[address] = await contract.methods.token1().call();
+    },
+
+    async promiseAllChunked(data, handlerFn, chunkSize, progressFn) {
+        const clonedData = [...data];
+        let results = [];
+        while (clonedData.length) {
+            const chunk = await Promise.all(clonedData.splice(0, chunkSize).map(handlerFn));
+            results = results.concat(chunk);
+            if (progressFn) await progressFn(chunk, results);
+        }
+        return results;
     },
 
     toChecksumAddress: (address) => web3.utils.toChecksumAddress(address.toLowerCase()),
